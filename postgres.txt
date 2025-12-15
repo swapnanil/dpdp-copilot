@@ -1,0 +1,13 @@
+// ================================
+// SQL (run once on Postgres)
+// ================================
+/*
+CREATE TABLE requests (
+id UUID PRIMARY KEY,
+message TEXT NOT NULL,
+type TEXT NOT NULL,
+suggested_reply TEXT,
+sla_status TEXT,
+created_at TIMESTAMP DEFAULT now()
+);
+*/
