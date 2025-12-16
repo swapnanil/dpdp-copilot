@@ -42,6 +42,8 @@ export default function Home() {
           const badge = slaBadge(r.sla_status)
 
           return (
+            <a href={`/requests/${r.id}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}>
             <div
               key={r.id}
               style={{
@@ -76,6 +78,7 @@ export default function Home() {
                 {badge.label}
               </div>
             </div>
+            </a>
           )
         })}
       </div>
