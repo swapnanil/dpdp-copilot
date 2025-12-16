@@ -17,7 +17,7 @@ export async function GET() {
 export async function POST(req) {
     const body = await req.json()
     const { message, language } = body
-
+    const source = body.source || 'unknown'
 
     const type = await classifyRequest(message)
     const reply = await draftReply(message, type, language)
