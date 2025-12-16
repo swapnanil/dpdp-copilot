@@ -2,6 +2,7 @@
 // app/api/requests/route.js
 // ================================
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 import { query } from '../../../lib/db'
 import { classifyRequest, draftReply } from '../../../lib/llm'
 import { v4 as uuid } from 'uuid'
