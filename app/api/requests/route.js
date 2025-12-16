@@ -5,56 +5,67 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 import { query } from '../../../lib/db'
 import { classifyRequest, draftReply } from '../../../lib/llm'
+import { computeSlaStatus } from '../../../lib/sla'
 import { v4 as uuid } from 'uuid'
 import { logEvidence } from '../../../lib/evidence'
+const SLA_DAYS = 7
 
 
 export async function GET() {
     const res = await query('SELECT * FROM requests ORDER BY created_at DESC')
-    return Response.json(res.rows)
+    const rows = res.rows.map(r => ({
+        ...r,
+        sla_status: computeSlaStatus(r.sla_due_at)
+    }))
+
+    return Response.json(rows)
 }
 
 
 export async function POST(req) {
-  const body = await req.json()
-  const { message, language } = body
+    const body = await req.json()
+    const { message, language } = body
 
-  const id = uuid()
+    const id = uuid()
 
-  // 1️⃣ Store request
-  await query(
-    `INSERT INTO requests (id, message, type, sla_status)
-     VALUES ($1, $2, $3, $4)`,
-    [id, message, 'PENDING', 'OPEN']
-  )
+    // 1️⃣ Store request
+    const slaDueAt = new Date()
+    slaDueAt.setDate(slaDueAt.getDate() + SLA_DAYS)
 
-  await logEvidence(id, 'REQUEST_CREATED', {
-    source: 'public_form'
-  })
+    await query(
+        `INSERT INTO requests (id, message, type, sla_status, sla_due_at)
+   VALUES ($1, $2, $3, $4, $5)`,
+        [id, message, 'PENDING', 'OPEN', slaDueAt]
+    )
 
-  // 2️⃣ Classify
-  const type = await classifyRequest(message)
 
-  await query(
-    `UPDATE requests SET type = $1 WHERE id = $2`,
-    [type, id]
-  )
+    await logEvidence(id, 'REQUEST_CREATED', {
+        source: 'public_form'
+    })
 
-  await logEvidence(id, 'REQUEST_CLASSIFIED', {
-    type
-  })
+    // 2️⃣ Classify
+    const type = await classifyRequest(message)
 
-  // 3️⃣ Draft reply
-  const reply = await draftReply(message, type, language)
+    await query(
+        `UPDATE requests SET type = $1 WHERE id = $2`,
+        [type, id]
+    )
 
-  await query(
-    `UPDATE requests SET suggested_reply = $1 WHERE id = $2`,
-    [reply, id]
-  )
+    await logEvidence(id, 'REQUEST_CLASSIFIED', {
+        type
+    })
 
-  await logEvidence(id, 'REPLY_SUGGESTED', {
-    language
-  })
+    // 3️⃣ Draft reply
+    const reply = await draftReply(message, type, language)
 
-  return Response.json({ id, type, reply })
+    await query(
+        `UPDATE requests SET suggested_reply = $1 WHERE id = $2`,
+        [reply, id]
+    )
+
+    await logEvidence(id, 'REPLY_SUGGESTED', {
+        language
+    })
+
+    return Response.json({ id, type, reply })
 }

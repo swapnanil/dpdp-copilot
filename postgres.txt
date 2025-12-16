@@ -4,7 +4,8 @@ CREATE TABLE requests (
   type TEXT NOT NULL,
   suggested_reply TEXT,
   sla_status TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  sla_due_at TIMESTAMPTZ
 );
 
 
