@@ -1,49 +1,26 @@
-# ----------------------------------------------------
-# Base image (stable, boring, well-supported)
-# ----------------------------------------------------
 FROM node:20-alpine
 
-# ----------------------------------------------------
-# Set working directory
-# ----------------------------------------------------
 WORKDIR /app
 
-# ----------------------------------------------------
-# Install minimal OS dependencies
-# (add more ONLY if something breaks)
-# ----------------------------------------------------
-RUN apk add --no-cache \
-    libc6-compat \
-    ca-certificates
+RUN apk add --no-cache libc6-compat ca-certificates
 
-# ----------------------------------------------------
-# Install Node dependencies
-# ----------------------------------------------------
+# Install deps
 COPY package.json package-lock.json* ./
-RUN npm install --production
+RUN npm install
 
-# ----------------------------------------------------
-# Copy application source
-# ----------------------------------------------------
+# Copy source
 COPY . .
 
-# ----------------------------------------------------
-# Build app (Next.js / backend build)
-# ----------------------------------------------------
+# Build
 RUN npm run build
 
-# ----------------------------------------------------
-# Environment
-# ----------------------------------------------------
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# ----------------------------------------------------
-# Expose port (Railway auto-detects this)
-# ----------------------------------------------------
 EXPOSE 3000
 
-# ----------------------------------------------------
-# Start app
-# ----------------------------------------------------
+# 👇 CRITICAL PART
+# Copy standalone output + static assets
+RUN cp -r .next/static .next/standalone/.next/static
+
 CMD ["node", ".next/standalone/server.js"]

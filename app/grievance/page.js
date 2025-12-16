@@ -82,7 +82,7 @@ export default function GrievancePage() {
           </select>
         </div>
 
-        <button disabled={loading}>
+        <button type="submit" disabled={loading}>
           {loading ? 'Submitting…' : 'Submit'}
         </button>
       </form>
