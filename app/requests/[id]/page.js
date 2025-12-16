@@ -17,6 +17,19 @@ function slaBadge(status) {
 export default function RequestDetailPage() {
     const { id } = useParams()
     const [data, setData] = useState(null)
+    const [sending, setSending] = useState(false)
+    const [sent, setSent] = useState(false)
+
+    async function sendReply() {
+        setSending(true)
+
+        await fetch(`/api/requests/${request.id}/send-reply`, {
+            method: 'POST'
+        })
+
+        setSent(true)
+        setSending(false)
+    }
 
     useEffect(() => {
         fetch(`/api/requests/${id}`)
@@ -65,8 +78,40 @@ export default function RequestDetailPage() {
                     <li>✔ Request received</li>
                     <li>✔ Request classified</li>
                     <li>{request.suggested_reply ? '✔' : '⬜'} Reply drafted</li>
-                    <li>⬜ Response sent</li>
+                    <li>{sent ? '✔' : '⬜'} Response sent</li>
                 </ul>
+            </div>
+
+            {/* Reply */}
+            <div style={{ marginBottom: 24 }}>
+                <h4>Suggested Reply</h4>
+
+                <div
+                    style={{
+                        background: '#f7f7f7',
+                        padding: 12,
+                        borderRadius: 6,
+                        fontSize: 14,
+                        marginBottom: 12
+                    }}
+                >
+                    {request.suggested_reply || 'No reply drafted yet.'}
+                </div>
+
+                <button
+                    onClick={sendReply}
+                    disabled={sending || sent}
+                    style={{
+                        padding: '8px 16px',
+                        borderRadius: 6,
+                        border: 'none',
+                        background: sent ? '#e0e0e0' : '#1a73e8',
+                        color: sent ? '#555' : '#fff',
+                        cursor: sent ? 'default' : 'pointer'
+                    }}
+                >
+                    {sent ? 'Reply sent' : sending ? 'Sending…' : 'Send reply'}
+                </button>
             </div>
 
             {/* Original message */}
