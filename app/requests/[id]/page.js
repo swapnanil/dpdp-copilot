@@ -18,7 +18,6 @@ export default function RequestDetailPage() {
     const { id } = useParams()
     const [data, setData] = useState(null)
     const [sending, setSending] = useState(false)
-    const sent = evidence.some(e => e.event_type === 'REPLY_SENT')
 
     async function sendReply() {
         setSending(true)
@@ -46,6 +45,7 @@ export default function RequestDetailPage() {
 
     const { request, evidence } = data
     const sla = slaBadge(request.sla_status)
+    const sent = evidence.some(e => e.event_type === 'REPLY_SENT')
 
     return (
         <div>
