@@ -1,8 +1,9 @@
 // ================================
 // app/api/requests/route.js
 // ================================
-import { query } from '@/lib/db'
-import { classifyRequest, draftReply } from '@/lib/llm'
+export const runtime = 'nodejs'
+import { query } from '../../../lib/db'
+import { classifyRequest, draftReply } from '../../../lib/llm'
 import { v4 as uuid } from 'uuid'
 
 
