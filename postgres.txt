@@ -1,13 +1,17 @@
-// ================================
-// SQL (run once on Postgres)
-// ================================
-/*
 CREATE TABLE requests (
-id UUID PRIMARY KEY,
-message TEXT NOT NULL,
-type TEXT NOT NULL,
-suggested_reply TEXT,
-sla_status TEXT,
-created_at TIMESTAMP DEFAULT now()
+  id UUID PRIMARY KEY,
+  message TEXT NOT NULL,
+  type TEXT NOT NULL,
+  suggested_reply TEXT,
+  sla_status TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-*/
+
+
+CREATE TABLE evidence_events (
+  id UUID PRIMARY KEY,
+  request_id UUID REFERENCES requests(id),
+  event_type TEXT NOT NULL,
+  event_data JSONB,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
