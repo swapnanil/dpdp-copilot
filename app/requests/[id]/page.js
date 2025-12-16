@@ -18,7 +18,7 @@ export default function RequestDetailPage() {
     const { id } = useParams()
     const [data, setData] = useState(null)
     const [sending, setSending] = useState(false)
-    const [sent, setSent] = useState(false)
+    const sent = evidence.some(e => e.event_type === 'REPLY_SENT')
 
     async function sendReply() {
         setSending(true)
@@ -27,7 +27,10 @@ export default function RequestDetailPage() {
             method: 'POST'
         })
 
-        setSent(true)
+        // Re-fetch request + evidence
+        const refreshed = await fetch(`/api/requests/${request.id}`)
+        const data = await refreshed.json()
+        setData(data)
         setSending(false)
     }
 

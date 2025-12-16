@@ -23,6 +23,23 @@ export async function POST(req, { params }) {
   // 👉 Simulated send (email/SMS later)
   // At this stage, "sending" means operator approved & dispatched
 
+    // Check if reply already sent
+    const sentRes = await query(
+        `SELECT 1
+        FROM evidence_events
+        WHERE request_id = $1
+        AND event_type = 'REPLY_SENT'
+        LIMIT 1`,
+        [id]
+    )
+
+    if (sentRes.rows.length > 0) {
+        return Response.json(
+            { ok: true, alreadySent: true },
+            { status: 200 }
+        )
+    }
+
   await logEvidence(id, 'REPLY_SENT', {
     channel: 'manual',
     content: request.suggested_reply
