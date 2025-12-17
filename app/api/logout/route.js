@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server'
 
-export async function POST(req) {
-  const url = req.nextUrl.clone()
-  url.pathname = '/login'
-
-  const res = NextResponse.redirect(url)
+export async function GET(req) {
+  const res = NextResponse.redirect(new URL('/login', req.nextUrl.origin))
   res.cookies.set('auth', '', {
     maxAge: 0,
     path: '/'

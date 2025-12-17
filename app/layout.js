@@ -2,8 +2,10 @@
 // app/layout.js
 // ================================
 // app/layout.js (Phase 1 UX upgrade)
+import { cookies } from 'next/headers'
 
 export default function RootLayout({ children }) {
+  const auth = cookies().get('auth')?.value === 'true'
   return (
     <html>
       <body
@@ -24,21 +26,11 @@ export default function RootLayout({ children }) {
           {/* Header */}
           <div style={{ marginBottom: 16 }}>
             <h2 style={{ margin: 0 }}>DPDP Copilot</h2>
-            <form action="/api/logout" method="POST">
-                <button
-                    type="submit"
-                    style={{
-                        fontSize: 14,
-                        background: 'none',
-                        border: 'none',
-                        color: '#1a73e8',
-                        cursor: 'pointer',
-                        padding: 0
-                    }}
-                >
+            {auth && (
+                <a href="/api/logout" style={{ fontSize: 14 }}>
                     Logout
-                </button>
-            </form>
+                </a>
+            )}
             <div
               style={{
                 marginTop: 8,
