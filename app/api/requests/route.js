@@ -8,12 +8,13 @@ import { classifyRequest, draftReply } from '../../../lib/llm'
 import { computeSlaStatus } from '../../../lib/sla'
 import { v4 as uuid } from 'uuid'
 import { logEvidence } from '../../../lib/evidence'
-import { getCurrentOrgId } from '../../../lib/orgContext'
+import { getCurrentOrg } from '../../../../../../lib/orgService'
 const SLA_DAYS = 7
 
 
 export async function GET() {
-    const orgId = getCurrentOrgId()
+    const org = await getCurrentOrg()
+    const orgId = org.id
     const res = await query('SELECT * FROM requests WHERE org_id = $1 ORDER BY created_at DESC', [orgId])
     const rows = res.rows.map(r => ({
         ...r,
@@ -25,7 +26,8 @@ export async function GET() {
 
 
 export async function POST(req) {
-    const orgId = getCurrentOrgId()
+    const org = await getCurrentOrg()
+    const orgId = org.id
     const body = await req.json()
     const { message, language } = body
 

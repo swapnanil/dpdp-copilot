@@ -1,9 +1,10 @@
 export const runtime = 'nodejs'
 import { query } from '../../../../../../lib/db'
-import { getCurrentOrgId } from '../../../../../../lib/orgContext'
+import { getCurrentOrg } from '../../../../../../lib/orgService'
 
 export async function GET(req, { params }) {
-  const orgId = getCurrentOrgId()
+  const org = await getCurrentOrg()
+  const orgId = org.id
   const { id } = params
 
   const e = await query(

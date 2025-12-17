@@ -25,7 +25,7 @@ export default async function RootLayout({ children }) {
             padding: '24px 16px'
           }}
         >
-          {/* Header */}
+        {/* Header */}
         <div
             style={{
                 display: 'flex',
@@ -34,7 +34,7 @@ export default async function RootLayout({ children }) {
                 marginBottom: 16
             }}
         >
-            {/* Left: Product + Status */}
+            {/* Left: Product */}
             <div>
                 <h2 style={{ margin: 0 }}>DPDP Copilot</h2>
 
@@ -45,38 +45,42 @@ export default async function RootLayout({ children }) {
                         borderRadius: 6,
                         background: '#e6f4ea',
                         color: '#137333',
-                        fontSize: 14
+                        fontSize: 14,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 8
                     }}
                 >
-                    🟢 DPDP Status: All requests are within SLA
+                    <span style={{ fontSize: 12 }}>🟢</span>
+                    DPDP Status: All requests are within SLA
                 </div>
             </div>
 
-            {/* Right: Org name + Logout */}
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                    gap: 8
-                }}
-            >
+            {/* Right: Org + actions */}
+            <div style={{ textAlign: 'right' }}>
                 <div
                     style={{
-                        fontSize: 13,
-                        color: '#374151',
-                        background: '#f3f4f6',
-                        padding: '4px 10px',
-                        borderRadius: 12,
-                        whiteSpace: 'nowrap'
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        padding: '6px 12px',
+                        borderRadius: 20,
+                        background: '#eef3ff',
+                        color: '#1a3d8f',
+                        fontWeight: 600,
+                        fontSize: 14
                     }}
+                    title="Active Organization"
                 >
-                    {org.name}
+                    🏢 {org.name}
                 </div>
 
-                <LogoutButton />
+                <div style={{ marginTop: 6 }}>
+                    <LogoutButton />
+                </div>
             </div>
         </div>
+
 
           {/* Page content */}
           <div

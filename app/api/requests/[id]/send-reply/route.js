@@ -5,10 +5,11 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 import { query } from '../../../../../lib/db'
 import { logEvidence } from '../../../../../lib/evidence'
-import { getCurrentOrgId } from '../../../../../lib/orgContext'
+import { getCurrentOrg } from '../../../../../lib/orgService'
 
 export async function POST(req, { params }) {
-  const orgId = getCurrentOrgId()
+  const org = await getCurrentOrg()
+  const orgId = org.id
   const { id } = params
 
   // Fetch request
