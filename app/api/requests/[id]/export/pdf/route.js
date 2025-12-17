@@ -1,16 +1,17 @@
+export const runtime = 'nodejs'
 import puppeteer from 'puppeteer'
 import { query } from '../../../../../../lib/db'
 import { renderEvidenceHtml } from '../../../../../../lib/pdfTemplates/evidenceReport'
-
-export const runtime = 'nodejs'
+import { getCurrentOrgId } from '../../../../../../lib/orgContext'
+const orgId = getCurrentOrgId()
 
 export async function GET(req, { params }) {
   const { id } = params
 
-  const r = await query('SELECT * FROM requests WHERE id = $1', [id])
+  const r = await query('SELECT * FROM requests WHERE id = $1 AND org_id = $2', [id, orgId])
   const e = await query(
-    'SELECT * FROM evidence_events WHERE request_id = $1 ORDER BY created_at',
-    [id]
+    'SELECT * FROM evidence_events WHERE request_id = $1 AND org_id = $2 ORDER BY created_at',
+    [id, orgId]
   )
 
   if (!r.rows.length) {

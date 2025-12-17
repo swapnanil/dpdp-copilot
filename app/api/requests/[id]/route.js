@@ -1,25 +1,26 @@
 // app/api/requests/[id]/route.js
-
-import { query } from '../../../../lib/db'
-import { computeSlaStatus } from '../../../../lib/sla'
-
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+import { query } from '../../../../lib/db'
+import { computeSlaStatus } from '../../../../lib/sla'
+import { getCurrentOrgId } from '../../../../lib/orgContext'
+const orgId = getCurrentOrgId()
 
 export async function GET(req, { params }) {
     const { id } = params
 
     const requestRes = await query(
-        'SELECT * FROM requests WHERE id = $1',
-        [id]
+        'SELECT * FROM requests WHERE id = $1 AND org_id = $2',
+        [id, orgId]
     )
 
     const evidenceRes = await query(
         `SELECT id, event_type, created_at
      FROM evidence_events
      WHERE request_id = $1
+     AND org_id = $2
      ORDER BY created_at ASC`,
-        [id]
+        [id, orgId]
     )
 
     const request = requestRes.rows[0]

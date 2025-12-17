@@ -8,11 +8,13 @@ import { classifyRequest, draftReply } from '../../../lib/llm'
 import { computeSlaStatus } from '../../../lib/sla'
 import { v4 as uuid } from 'uuid'
 import { logEvidence } from '../../../lib/evidence'
+import { getCurrentOrgId } from '../../../lib/orgContext'
+const orgId = getCurrentOrgId()
 const SLA_DAYS = 7
 
 
 export async function GET() {
-    const res = await query('SELECT * FROM requests ORDER BY created_at DESC')
+    const res = await query('SELECT * FROM requests WHERE org_id = $1 ORDER BY created_at DESC', [orgId])
     const rows = res.rows.map(r => ({
         ...r,
         sla_status: computeSlaStatus(r.sla_due_at)
@@ -33,9 +35,9 @@ export async function POST(req) {
     slaDueAt.setDate(slaDueAt.getDate() + SLA_DAYS)
 
     await query(
-        `INSERT INTO requests (id, message, type, sla_status, sla_due_at)
-   VALUES ($1, $2, $3, $4, $5)`,
-        [id, message, 'PENDING', 'OPEN', slaDueAt]
+        `INSERT INTO requests (id, message, type, sla_status, sla_due_at, org_id)
+   VALUES ($1, $2, $3, $4, $5, $6)`,
+        [id, message, 'PENDING', 'OPEN', slaDueAt, orgId]
     )
 
 
@@ -47,8 +49,8 @@ export async function POST(req) {
     const type = await classifyRequest(message)
 
     await query(
-        `UPDATE requests SET type = $1 WHERE id = $2`,
-        [type, id]
+        `UPDATE requests SET type = $1 WHERE id = $2 AND org_id = $3`,
+        [type, id, orgId]
     )
 
     await logEvidence(id, 'REQUEST_CLASSIFIED', {
@@ -59,8 +61,8 @@ export async function POST(req) {
     const reply = await draftReply(message, type, language)
 
     await query(
-        `UPDATE requests SET suggested_reply = $1 WHERE id = $2`,
-        [reply, id]
+        `UPDATE requests SET suggested_reply = $1 WHERE id = $2 AND org_id = $3`,
+        [reply, id, orgId]
     )
 
     await logEvidence(id, 'REPLY_SUGGESTED', {

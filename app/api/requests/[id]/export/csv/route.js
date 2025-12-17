@@ -1,13 +1,14 @@
-import { query } from '../../../../../../lib/db'
-
 export const runtime = 'nodejs'
+import { query } from '../../../../../../lib/db'
+import { getCurrentOrgId } from '../../../../../../lib/orgContext'
+const orgId = getCurrentOrgId()
 
 export async function GET(req, { params }) {
   const { id } = params
 
   const e = await query(
-    'SELECT event_type, created_at FROM evidence_events WHERE request_id = $1 ORDER BY created_at',
-    [id]
+    'SELECT event_type, created_at FROM evidence_events WHERE request_id = $1 AND org_id = $2 ORDER BY created_at',
+    [id, orgId]
   )
 
   let csv = 'event_type,created_at\n'

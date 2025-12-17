@@ -1,18 +1,20 @@
 // app/api/requests/[id]/send-reply/route.js
 
-import { query } from '../../../../../lib/db'
-import { logEvidence } from '../../../../../lib/evidence'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+import { query } from '../../../../../lib/db'
+import { logEvidence } from '../../../../../lib/evidence'
+import { getCurrentOrgId } from '../../../../../lib/orgContext'
+const orgId = getCurrentOrgId()
 
 export async function POST(req, { params }) {
   const { id } = params
 
   // Fetch request
   const res = await query(
-    'SELECT * FROM requests WHERE id = $1',
-    [id]
+    'SELECT * FROM requests WHERE id = $1 AND org_id = $2',
+    [id, orgId]
   )
 
   const request = res.rows[0]
@@ -29,8 +31,9 @@ export async function POST(req, { params }) {
         FROM evidence_events
         WHERE request_id = $1
         AND event_type = 'REPLY_SENT'
+        AND org_id = $2
         LIMIT 1`,
-        [id]
+        [id, orgId]
     )
 
     if (sentRes.rows.length > 0) {
@@ -49,8 +52,9 @@ export async function POST(req, { params }) {
   await query(
     `UPDATE requests
      SET sla_status = 'CLOSED'
-     WHERE id = $1`,
-    [id]
+     WHERE id = $1
+     AND org_id = $2`,
+    [id, orgId]
   )
 
   return Response.json({ ok: true })
