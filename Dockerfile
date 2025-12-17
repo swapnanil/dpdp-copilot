@@ -30,8 +30,4 @@ EXPOSE 3000
 # Copy static assets into standalone
 RUN cp -r .next/static .next/standalone/.next/static
 
-# ✅ CRITICAL FIX FOR PDFKIT
-# Ensure pdfkit-data exists at runtime
-RUN cp -r pdfkit-data .next/standalone/pdfkit-data
-
 CMD ["node", ".next/standalone/server.js"]
