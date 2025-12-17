@@ -1,6 +1,13 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
+
 export default function LogoutButton() {
+  const pathname = usePathname()
+
+  // Do not show logout on login page
+  if (pathname === '/login') return null
+
   async function logout() {
     await fetch('/api/logout')
     window.location.href = '/login'
