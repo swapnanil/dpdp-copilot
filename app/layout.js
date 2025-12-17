@@ -2,10 +2,10 @@
 // app/layout.js
 // ================================
 // app/layout.js (Phase 1 UX upgrade)
-import { cookies } from 'next/headers'
+import LogoutButton from './components/LogoutButton'
 
 export default function RootLayout({ children }) {
-  const auth = cookies().get('auth')?.value === 'true'
+  
   return (
     <html>
       <body
@@ -26,11 +26,7 @@ export default function RootLayout({ children }) {
           {/* Header */}
           <div style={{ marginBottom: 16 }}>
             <h2 style={{ margin: 0 }}>DPDP Copilot</h2>
-            {auth && (
-                <a href="/api/logout" style={{ fontSize: 14 }}>
-                    Logout
-                </a>
-            )}
+            <LogoutButton />
             <div
               style={{
                 marginTop: 8,

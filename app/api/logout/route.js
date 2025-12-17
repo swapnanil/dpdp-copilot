@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
-export async function GET(req) {
-  const res = NextResponse.redirect(new URL('/login', req.nextUrl.origin))
+export async function GET() {
+  const res = NextResponse.json({ ok: true })
   res.cookies.set('auth', '', {
     maxAge: 0,
     path: '/'
