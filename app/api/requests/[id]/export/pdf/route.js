@@ -1,7 +1,10 @@
+import path from 'path'
+process.env.PDFKIT_DATA_PATH = path.join(process.cwd(), 'pdfkit-data')
+
 import PDFDocument from 'pdfkit'
 import fs from 'fs'
-import path from 'path'
 import { query } from '../../../../../../lib/db'
+
 
 export const runtime = 'nodejs'
 
