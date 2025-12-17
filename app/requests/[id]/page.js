@@ -143,6 +143,28 @@ export default function RequestDetailPage() {
                     ))}
                 </div>
             </div>
+
+            {/* Export Evidence*/}
+            <div style={{ marginTop: 24 }}>
+                <h4>Export Evidence</h4>
+
+                <div style={{ display: 'flex', gap: 12 }}>
+                    <a
+                        href={`/api/requests/${request.id}/export/pdf`}
+                        target="_blank"
+                    >
+                        Export PDF
+                    </a>
+
+                    <a
+                        href={`/api/requests/${request.id}/export/csv`}
+                        target="_blank"
+                    >
+                        Export CSV
+                    </a>
+                </div>
+            </div>
+            
         </div>
     )
 }
