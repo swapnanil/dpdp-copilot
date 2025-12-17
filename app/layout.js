@@ -24,15 +24,21 @@ export default function RootLayout({ children }) {
           {/* Header */}
           <div style={{ marginBottom: 16 }}>
             <h2 style={{ margin: 0 }}>DPDP Copilot</h2>
-            <a
-                href="/login"
-                onClick={() => {
-                    document.cookie = 'auth=; Max-Age=0; path=/'
-                }}
-                style={{ fontSize: 14 }}
-            >
-                Logout
-            </a>
+            <form action="/api/logout" method="POST">
+                <button
+                    type="submit"
+                    style={{
+                        fontSize: 14,
+                        background: 'none',
+                        border: 'none',
+                        color: '#1a73e8',
+                        cursor: 'pointer',
+                        padding: 0
+                    }}
+                >
+                    Logout
+                </button>
+            </form>
             <div
               style={{
                 marginTop: 8,
