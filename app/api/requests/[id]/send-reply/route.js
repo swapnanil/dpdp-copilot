@@ -6,9 +6,9 @@ export const dynamic = 'force-dynamic'
 import { query } from '../../../../../lib/db'
 import { logEvidence } from '../../../../../lib/evidence'
 import { getCurrentOrgId } from '../../../../../lib/orgContext'
-const orgId = getCurrentOrgId()
 
 export async function POST(req, { params }) {
+  const orgId = getCurrentOrgId()
   const { id } = params
 
   // Fetch request

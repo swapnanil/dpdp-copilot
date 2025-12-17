@@ -3,9 +3,11 @@ import puppeteer from 'puppeteer'
 import { query } from '../../../../../../lib/db'
 import { renderEvidenceHtml } from '../../../../../../lib/pdfTemplates/evidenceReport'
 import { getCurrentOrgId } from '../../../../../../lib/orgContext'
-const orgId = getCurrentOrgId()
+import { getCurrentOrg } from '../../../../../../lib/orgService'
 
 export async function GET(req, { params }) {
+  const orgId = getCurrentOrgId()
+  const org = await getCurrentOrg()
   const { id } = params
 
   const r = await query('SELECT * FROM requests WHERE id = $1 AND org_id = $2', [id, orgId])
@@ -19,6 +21,7 @@ export async function GET(req, { params }) {
   }
 
   const html = renderEvidenceHtml({
+    org,
     request: r.rows[0],
     evidence: e.rows
   })

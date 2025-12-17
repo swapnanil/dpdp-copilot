@@ -3,9 +3,10 @@
 // ================================
 // app/layout.js (Phase 1 UX upgrade)
 import LogoutButton from './components/LogoutButton'
+import { getCurrentOrg } from './../lib/orgService'
 
-export default function RootLayout({ children }) {
-  
+export default async function RootLayout({ children }) {
+  const org = await getCurrentOrg()
   return (
     <html>
       <body
@@ -24,22 +25,57 @@ export default function RootLayout({ children }) {
           }}
         >
           {/* Header */}
-          <div style={{ marginBottom: 16 }}>
-            <h2 style={{ margin: 0 }}>DPDP Copilot</h2>
-            <LogoutButton />
-            <div
-              style={{
-                marginTop: 8,
-                padding: '8px 12px',
-                borderRadius: 6,
-                background: '#e6f4ea',
-                color: '#137333',
-                fontSize: 14
-              }}
-            >
-              🟢 DPDP Status: All requests are within SLA
+        <div
+            style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: 16
+            }}
+        >
+            {/* Left: Product + Status */}
+            <div>
+                <h2 style={{ margin: 0 }}>DPDP Copilot</h2>
+
+                <div
+                    style={{
+                        marginTop: 8,
+                        padding: '8px 12px',
+                        borderRadius: 6,
+                        background: '#e6f4ea',
+                        color: '#137333',
+                        fontSize: 14
+                    }}
+                >
+                    🟢 DPDP Status: All requests are within SLA
+                </div>
             </div>
-          </div>
+
+            {/* Right: Org name + Logout */}
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    gap: 8
+                }}
+            >
+                <div
+                    style={{
+                        fontSize: 13,
+                        color: '#374151',
+                        background: '#f3f4f6',
+                        padding: '4px 10px',
+                        borderRadius: 12,
+                        whiteSpace: 'nowrap'
+                    }}
+                >
+                    {org.name}
+                </div>
+
+                <LogoutButton />
+            </div>
+        </div>
 
           {/* Page content */}
           <div

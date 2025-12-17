@@ -4,9 +4,9 @@ export const dynamic = 'force-dynamic'
 import { query } from '../../../../lib/db'
 import { computeSlaStatus } from '../../../../lib/sla'
 import { getCurrentOrgId } from '../../../../lib/orgContext'
-const orgId = getCurrentOrgId()
 
 export async function GET(req, { params }) {
+    const orgId = getCurrentOrgId()
     const { id } = params
 
     const requestRes = await query(
