@@ -8,7 +8,7 @@ import { classifyRequest, draftReply } from '../../../lib/llm'
 import { computeSlaStatus } from '../../../lib/sla'
 import { v4 as uuid } from 'uuid'
 import { logEvidence } from '../../../lib/evidence'
-import { getCurrentOrg } from '../../../../../../lib/orgService'
+import { getCurrentOrg } from '../../../lib/orgService'
 const SLA_DAYS = 7
 
 

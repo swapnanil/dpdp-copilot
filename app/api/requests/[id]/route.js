@@ -3,10 +3,11 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 import { query } from '../../../../lib/db'
 import { computeSlaStatus } from '../../../../lib/sla'
-import { getCurrentOrgId } from '../../../../lib/orgContext'
+import { getCurrentOrg } from '../../../../lib/orgService'
 
 export async function GET(req, { params }) {
-    const orgId = getCurrentOrgId()
+    const org = await getCurrentOrg()
+    const orgId = org.id
     const { id } = params
 
     const requestRes = await query(
