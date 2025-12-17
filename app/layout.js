@@ -2,6 +2,7 @@
 // app/layout.js
 // ================================
 // app/layout.js (Phase 1 UX upgrade)
+export const dynamic = 'force-dynamic'
 import LogoutButton from './components/LogoutButton'
 import { getCurrentOrg } from './../lib/orgService'
 
