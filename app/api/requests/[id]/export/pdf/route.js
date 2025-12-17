@@ -1,4 +1,6 @@
 import PDFDocument from 'pdfkit'
+import fs from 'fs'
+import path from 'path'
 import { query } from '../../../../../../lib/db'
 
 export const runtime = 'nodejs'
@@ -25,6 +27,11 @@ export async function GET(req, { params }) {
   doc.on('data', c => chunks.push(c))
   doc.on('end', () => {})
 
+  // ✅ Explicit font registration
+  const fontPath = path.join(process.cwd(), 'fonts', 'Inter-Regular.ttf')
+  doc.registerFont('Body', fontPath)
+  doc.font('Body')
+
   doc.fontSize(18).text('DPDP Compliance Evidence Report')
   doc.moveDown()
 
@@ -36,14 +43,14 @@ export async function GET(req, { params }) {
   doc.moveDown()
 
   doc.text('Original Message:')
-  doc.font('Helvetica-Oblique').text(request.message)
-  doc.font('Helvetica')
+  doc.moveDown(0.5)
+  doc.text(request.message)
   doc.moveDown()
 
   if (request.suggested_reply) {
     doc.text('Suggested Reply:')
-    doc.font('Helvetica-Oblique').text(request.suggested_reply)
-    doc.font('Helvetica')
+    doc.moveDown(0.5)
+    doc.text(request.suggested_reply)
     doc.moveDown()
   }
 
