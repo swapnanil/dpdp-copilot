@@ -17,6 +17,14 @@ function slaBadge(status) {
     return { bg: '#e6f4ea', text: '#137333', label: 'Within SLA' }
 }
 
+function statusBadge(request) {
+    if (request.status === 'CLOSED') {
+        return { bg: '#eeeeee', text: '#555', label: 'Closed' }
+    }
+
+    return slaBadge(request.sla_status)
+}
+
 export default function Home() {
     const [requests, setRequests] = useState([])
     const [loading, setLoading] = useState(true)
@@ -51,13 +59,13 @@ export default function Home() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {requests.map(r => {
-                    const badge = slaBadge(r.sla_status)
+                    const badge = statusBadge(r)
 
                     return (
                         <a href={`/requests/${r.id}`}
+                            key={r.id}
                             style={{ textDecoration: 'none', color: 'inherit' }}>
                             <div
-                                key={r.id}
                                 style={{
                                     border: '1px solid #e0e0e0',
                                     borderRadius: 6,
@@ -70,6 +78,9 @@ export default function Home() {
                                 <div style={{ maxWidth: '75%' }}>
                                     <div style={{ fontWeight: 600, marginBottom: 4 }}>
                                         {r.type}
+                                    </div>
+                                    <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>
+                                        {r.status || 'OPEN'}
                                     </div>
                                     <div style={{ fontSize: 14, color: '#444' }}>
                                         {r.message.slice(0, 120)}

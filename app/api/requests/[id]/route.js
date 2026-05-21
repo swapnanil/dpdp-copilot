@@ -25,6 +25,9 @@ export async function GET(req, { params }) {
     )
 
     const request = requestRes.rows[0]
+    if (!request) {
+        return Response.json({ error: 'request not found' }, { status: 404 })
+    }
 
     return Response.json({
         request: {

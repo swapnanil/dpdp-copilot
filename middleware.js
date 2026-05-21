@@ -1,26 +1,26 @@
 import { NextResponse } from 'next/server'
+import { isValidSession } from './lib/auth'
 
-export function middleware(req) {
+export async function middleware(req) {
   const { pathname } = req.nextUrl
   const auth = req.cookies.get('auth')?.value
+  const authenticated = await isValidSession(auth)
 
-  // Public routes
+  if (pathname === '/login' && authenticated) {
+    return NextResponse.redirect(new URL('/', req.url))
+  }
+
   if (
     pathname.startsWith('/login') ||
     pathname.startsWith('/api/login') ||
     pathname.startsWith('/api/logout') ||
+    pathname.startsWith('/api/public') ||
     pathname.startsWith('/_next')
   ) {
     return NextResponse.next()
   }
 
-  // Logged-in user trying to access /login → redirect home
-  if (pathname === '/login' && auth === 'true') {
-    return NextResponse.redirect(new URL('/', req.url))
-  }
-
-  // Not logged in → protect everything else
-  if (auth !== 'true' && pathname !== '/login') {
+  if (!authenticated) {
     return NextResponse.redirect(new URL('/login', req.url))
   }
 

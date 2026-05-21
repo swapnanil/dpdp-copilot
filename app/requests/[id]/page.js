@@ -6,12 +6,20 @@ import { useParams } from 'next/navigation'
 
 function slaBadge(status) {
     if (status === 'OVERDUE') {
-        return { bg: '#fce8e6', text: '#c5221f', label: 'Overdue', icon: '🔴' }
+        return { bg: '#fce8e6', text: '#c5221f', label: 'Overdue' }
     }
     if (status === 'DUE_SOON') {
-        return { bg: '#fff4e5', text: '#b06000', label: 'Due soon', icon: '🟠' }
+        return { bg: '#fff4e5', text: '#b06000', label: 'Due soon' }
     }
-    return { bg: '#e6f4ea', text: '#137333', label: 'Within SLA', icon: '🟢' }
+    return { bg: '#e6f4ea', text: '#137333', label: 'Within SLA' }
+}
+
+function statusBadge(request) {
+    if (request.status === 'CLOSED') {
+        return { bg: '#eeeeee', text: '#555', label: 'Closed' }
+    }
+
+    return slaBadge(request.sla_status)
 }
 
 export default function RequestDetailPage() {
@@ -22,15 +30,17 @@ export default function RequestDetailPage() {
     async function sendReply() {
         setSending(true)
 
-        await fetch(`/api/requests/${request.id}/send-reply`, {
-            method: 'POST'
-        })
+        try {
+            await fetch(`/api/requests/${id}/send-reply`, {
+                method: 'POST'
+            })
 
-        // Re-fetch request + evidence
-        const refreshed = await fetch(`/api/requests/${request.id}`)
-        const data = await refreshed.json()
-        setData(data)
-        setSending(false)
+            const refreshed = await fetch(`/api/requests/${id}`)
+            const refreshedData = await refreshed.json()
+            setData(refreshedData)
+        } finally {
+            setSending(false)
+        }
     }
 
     useEffect(() => {
@@ -43,8 +53,12 @@ export default function RequestDetailPage() {
         return <p>Loading request…</p>
     }
 
+    if (data.error) {
+        return <p>{data.error}</p>
+    }
+
     const { request, evidence } = data
-    const sla = slaBadge(request.sla_status)
+    const status = statusBadge(request)
     const sent = evidence.some(e => e.event_type === 'REPLY_SENT')
 
     return (
@@ -58,19 +72,21 @@ export default function RequestDetailPage() {
                     marginBottom: 16,
                     padding: '8px 12px',
                     borderRadius: 6,
-                    background: sla.bg,
-                    color: sla.text,
+                    background: status.bg,
+                    color: status.text,
                     fontSize: 14,
                     display: 'inline-block'
                 }}
             >
-                {sla.icon} SLA Status: {sla.label}
+                Status: {status.label}
             </div>
 
 
             {/* Facts */}
             <div style={{ marginBottom: 16, fontSize: 14, color: '#444' }}>
                 <div><b>Request ID:</b> {request.id}</div>
+                <div><b>Workflow Status:</b> {request.status || 'OPEN'}</div>
+                <div><b>SLA Status:</b> {request.sla_status}</div>
                 <div><b>Created:</b> {new Date(request.created_at).toLocaleString()}</div>
             </div>
 
@@ -78,10 +94,10 @@ export default function RequestDetailPage() {
             <div style={{ marginBottom: 24 }}>
                 <h4>Resolution Checklist</h4>
                 <ul>
-                    <li>✔ Request received</li>
-                    <li>✔ Request classified</li>
-                    <li>{request.suggested_reply ? '✔' : '⬜'} Reply drafted</li>
-                    <li>{sent ? '✔' : '⬜'} Response sent</li>
+                    <li>Done: Request received</li>
+                    <li>Done: Request classified</li>
+                    <li>{request.suggested_reply ? 'Done' : 'Pending'}: Reply drafted</li>
+                    <li>{sent ? 'Done' : 'Pending'}: Response sent</li>
                 </ul>
             </div>
 

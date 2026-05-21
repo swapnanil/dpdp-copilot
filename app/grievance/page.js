@@ -14,7 +14,7 @@ export default function GrievancePage() {
     e.preventDefault()
     setLoading(true)
 
-    await fetch('/api/requests', {
+    await fetch('/api/public/requests', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

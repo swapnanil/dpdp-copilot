@@ -16,7 +16,7 @@ export async function GET(req, { params }) {
   )
 
   if (!r.rows.length) {
-    return new Response('Not found', { status: 404 })
+    return Response.json({ error: 'request not found' }, { status: 404 })
   }
 
   const html = renderEvidenceHtml({

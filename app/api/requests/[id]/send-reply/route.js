@@ -52,7 +52,7 @@ export async function POST(req, { params }) {
   // Mark request closed
   await query(
     `UPDATE requests
-     SET sla_status = 'CLOSED'
+     SET status = 'CLOSED'
      WHERE id = $1
      AND org_id = $2`,
     [id, orgId]

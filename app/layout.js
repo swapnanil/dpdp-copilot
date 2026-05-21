@@ -4,10 +4,10 @@
 // app/layout.js (Phase 1 UX upgrade)
 export const dynamic = 'force-dynamic'
 import LogoutButton from './components/LogoutButton'
-import { getCurrentOrg } from './../lib/orgService'
+import { getCurrentOrgSafe } from './../lib/orgService'
 
 export default async function RootLayout({ children }) {
-  const org = await getCurrentOrg()
+  const org = await getCurrentOrgSafe()
   return (
     <html>
       <body
@@ -51,8 +51,8 @@ export default async function RootLayout({ children }) {
                         gap: 8
                     }}
                 >
-                    <span style={{ fontSize: 12 }}>🟢</span>
-                    DPDP Status: All requests are within SLA
+                    <span style={{ fontSize: 12 }}>●</span>
+                    DPDP request workspace
                 </div>
             </div>
 
@@ -72,7 +72,7 @@ export default async function RootLayout({ children }) {
                     }}
                     title="Active Organization"
                 >
-                    🏢 {org.name}
+                    {org.name}
                 </div>
 
                 <div style={{ marginTop: 6 }}>

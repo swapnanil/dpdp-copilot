@@ -61,6 +61,7 @@ CREATE TABLE public.requests (
     id uuid NOT NULL,
     message text NOT NULL,
     type text NOT NULL,
+    status text DEFAULT 'OPEN'::text NOT NULL,
     suggested_reply text,
     sla_status text,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
@@ -96,6 +97,20 @@ ALTER TABLE ONLY public.requests
 
 
 --
+-- Name: evidence_events_request_org_created_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX evidence_events_request_org_created_idx ON public.evidence_events USING btree (request_id, org_id, created_at);
+
+
+--
+-- Name: requests_org_created_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX requests_org_created_idx ON public.requests USING btree (org_id, created_at DESC);
+
+
+--
 -- Name: evidence_events evidence_events_org_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -124,4 +139,3 @@ ALTER TABLE ONLY public.requests
 --
 
 \unrestrict iHgTlehX6n6f0XDkXpR4NeFBjaWHofYnGQMaCzfLtsbcychA31y6qx5MtU9hUnU
-
